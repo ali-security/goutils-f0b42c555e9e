@@ -1,13 +1,19 @@
 language: go
 
 go:
-  - 1.6
-  - 1.7
-  - 1.8
-  - tip
+  - 1.6.x
+  - 1.7.x
+  - 1.8.x
+  - 1.11.x
+
+install:
+  - mkdir -p "$GOPATH/src/github.com/Masterminds"
+  - ln -sfn "$TRAVIS_BUILD_DIR" "$GOPATH/src/github.com/Masterminds/goutils"
 
 script:
-  - go test -v
+  - cd "$GOPATH/src/github.com/Masterminds/goutils" && set -o pipefail && go test -v 2>&1 | tee /tmp/gotest.log
+  - >-
+    echo "TEST SUMMARY: $(grep -c '^--- PASS' /tmp/gotest.log) passed, $(grep -c '^--- FAIL' /tmp/gotest.log) failed, $(grep -c '^--- SKIP' /tmp/gotest.log) skipped"
 
 notifications:
   webhooks:
